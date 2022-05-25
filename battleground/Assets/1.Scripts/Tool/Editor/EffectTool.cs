@@ -31,7 +31,8 @@ public class EffectTool : EditorWindow
 
     private void OnGUI()
     {
-        if (effectData  == null)
+        if (effectData == null)
+
         {
             return;
         }
@@ -41,13 +42,13 @@ public class EffectTool : EditorWindow
             //상단 add, remove, copy
             //어떤 오브젝트가 들어가는지 모르기 때문에 박싱, 언박싱 반복
             UnityObject source = effectSource;
-            
+            EditorHelper.EditorToolTopLayer(effectData, ref selection, ref source, this.uiWidthMiddle);
             effectSource = (GameObject)source;
 
             EditorGUILayout.BeginHorizontal();
             {
                 //중간 데이터 목록
-                
+                EditorHelper.EditorToolListLayer(ref SP1, effectData, ref selection, ref source, this.uiWidthMiddle);
                 effectSource = (GameObject)source;
 
                 //설정부분
@@ -120,9 +121,10 @@ public class EffectTool : EditorWindow
         string enumName = "EffectList";
         StringBuilder builder = new StringBuilder();
         builder.AppendLine();
-        for(int i = 0; i < effectData.names.Length; i++)
+
+        for (int i = 0; i < effectData.names.Length; i++)
         {
-            if(effectData.names[i] != string.Empty)
+            if (effectData.names[i] != string.Empty)
             {
                 builder.AppendLine("     " + effectData.names[i] + " =  " + i + ",");
             }
@@ -130,3 +132,4 @@ public class EffectTool : EditorWindow
         EditorHelper.CreateEnumStructure(enumName, builder);
     }
 }
+
