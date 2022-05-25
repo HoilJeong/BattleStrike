@@ -31,8 +31,7 @@ public class EffectTool : EditorWindow
 
     private void OnGUI()
     {
-        if (effectData == null)
-
+        if (effectData  == null)
         {
             return;
         }
@@ -48,7 +47,7 @@ public class EffectTool : EditorWindow
             EditorGUILayout.BeginHorizontal();
             {
                 //중간 데이터 목록
-                EditorHelper.EditorToolListLayer(ref SP1, effectData, ref selection, ref source, this.uiWidthMiddle);
+                EditorHelper.EditorToolListLayer(ref SP1, effectData, ref selection, ref source, this.uiWidthLarge);
                 effectSource = (GameObject)source;
 
                 //설정부분
@@ -121,10 +120,9 @@ public class EffectTool : EditorWindow
         string enumName = "EffectList";
         StringBuilder builder = new StringBuilder();
         builder.AppendLine();
-
-        for (int i = 0; i < effectData.names.Length; i++)
+        for(int i = 0; i < effectData.names.Length; i++)
         {
-            if (effectData.names[i] != string.Empty)
+            if(effectData.names[i] != string.Empty)
             {
                 builder.AppendLine("     " + effectData.names[i] + " =  " + i + ",");
             }
@@ -132,4 +130,3 @@ public class EffectTool : EditorWindow
         EditorHelper.CreateEnumStructure(enumName, builder);
     }
 }
-
