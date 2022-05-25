@@ -20,7 +20,7 @@ public class BaseData : ScriptableObject // 데이터 컨테이너
 
         if (this.names != null)
         {
-            retValue = this.name.Length;
+            retValue = this.names.Length;
         }
 
         return retValue;
