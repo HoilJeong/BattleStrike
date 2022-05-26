@@ -22,7 +22,7 @@ public class SoundClip
     public AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic; //오디오 소스안에서의 사운드모드
     public float minDistance = 10000.0f;
     public float maxDistance = 50000.0f;
-    public float sparialBlend = 1.0f;
+    public float spatialBlend = 1.0f; //3D 공간화 계산(감쇠, 도플러 등)에 의해 영향을 받는 정도를 설정한다.
 
     public float fadeTime1 = 0.0f;
     public float fadeTime2 = 0.0f;
