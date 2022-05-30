@@ -214,12 +214,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 985692738}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f7f38a69c3e485448c44c16ae22035b, type: 3}
+  m_Script: {fileID: 11500000, guid: 56eff2930e66fc64cbaaeb1e9688b895, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1133071123}
-  pivotOffset: {x: 0, y: 1, z: 0}
-  camOffset: {x: 0.4, y: 0.5, z: -2}
+  pivotOffset: {x: 0, y: 0.7, z: 0}
+  camOffset: {x: 0, y: 0.7, z: 0}
   smooth: 10
   horizontalAimingSpeed: 6
   verticalAimingSpeed: 6
