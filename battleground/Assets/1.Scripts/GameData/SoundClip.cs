@@ -31,7 +31,7 @@ public class SoundClip
     public bool isFadeOut = false;
 
     public SoundClip() { }
-    public SoundClip(string cliPath, string clipName)
+    public SoundClip(string clipPath, string clipName)
     {
         this.clipPath = clipPath;
         this.clipName = clipName;

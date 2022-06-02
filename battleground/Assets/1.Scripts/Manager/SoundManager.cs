@@ -93,8 +93,8 @@ public class SoundManager : SingletonMonobehaviour<SoundManager>
 
         if (this.mixer != null)
         {
-            this.fadeA_audio.outputAudioMixerGroup = mixer.FindMatchingGroups(BGMVolumeParam)[0];
-            this.fadeB_audio.outputAudioMixerGroup = mixer.FindMatchingGroups(BGMVolumeParam)[0];
+            this.fadeA_audio.outputAudioMixerGroup = mixer.FindMatchingGroups(BGMGroupName)[0];
+            this.fadeB_audio.outputAudioMixerGroup = mixer.FindMatchingGroups(BGMGroupName)[0];
             this.UI_audio.outputAudioMixerGroup = mixer.FindMatchingGroups(UIGroupName)[0];
             for (int i = 0; i < this.effect_audios.Length; i++)
             {
@@ -230,11 +230,11 @@ public class SoundManager : SingletonMonobehaviour<SoundManager>
             {
                 if (currentPlayingType == MusicPlayingType.SourceA)
                 {
-                    currentSound.CheckLoop(fadeB_audio);
+                    currentSound.CheckLoop(fadeA_audio);
                 }
                 else if (currentPlayingType == MusicPlayingType.SourceB)
                 {
-                    currentSound.CheckLoop(fadeA_audio);
+                    currentSound.CheckLoop(fadeB_audio);
                 }
                 else if (currentPlayingType == MusicPlayingType.AtoB)
                 {
