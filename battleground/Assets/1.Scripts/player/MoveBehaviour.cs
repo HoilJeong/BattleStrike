@@ -101,8 +101,8 @@ public class MoveBehaviour : GenericBehaviour
         if (behaviourController.IsCurrentBehaviour(GetBehaviourCode) && collision.GetContact(0).normal.y <= 0.1f)
         {
             float vel = behaviourController.GetAnimator.velocity.magnitude;
-            Vector3 targetMove = Vector3.ProjectOnPlane(myTransform.forward, collision.GetContact(0).normal).normalized * vel;
-            behaviourController.GetRigidbody.AddForce(targetMove, ForceMode.VelocityChange);
+            Vector3 targentMove = Vector3.ProjectOnPlane(myTransform.forward, collision.GetContact(0).normal).normalized * vel;
+            behaviourController.GetRigidbody.AddForce(targentMove, ForceMode.VelocityChange);
         }
     }
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 /// <summary>
 /// 현재 동작, 기본 동작, 오버라이딩 동작, 잠긴 동작, 마우스 이동값, 
 /// 땅에 서있는지, GenericBehaviour를 상속받은 동작들을 업데이트 시켜준다.
