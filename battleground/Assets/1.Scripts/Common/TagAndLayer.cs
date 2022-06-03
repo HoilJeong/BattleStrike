@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using FC;
-namespace FC
+
+public class TagAndLayer
 {
-    public class TagAndLayer
+    public class LayerName
     {
-        public class LayerName
-        {
             public const string Default = "Default";
             public const string TrasnparentFX = "TransparentFX";
             public const string IgnoreRayCast = "Ignore Raycast";
@@ -20,10 +18,10 @@ namespace FC
             public const string Enemy = "Enemy";
             public const string Bound = "Bound";
             public const string Environment = "Environment";
-        }
+    }
 
-        public enum LayerIndex
-        {
+    public enum LayerIndex
+    {
             Default = 0,
             TransparentFX = 1,
             IgnoreRayCast = 2,
@@ -37,22 +35,22 @@ namespace FC
             Bound = 13,
             Environment = 14,
             
-        }
+    }
 
-        public static int GetLayerByName(string layerName)
-        {
+    public static int GetLayerByName(string layerName)
+    {
             return LayerMask.NameToLayer(layerName);
-        }
+    }
 
-        public class TagName
-        {
+    public class TagName
+    {
             public const string Untagged = "Untagged";
             public const string Player = "Player";
             public const string Enemy = "Enemy";
             public const string GameController = "GameController";
             public const string Finish = "Finish";
-        }
-
     }
+
 }
+
 
