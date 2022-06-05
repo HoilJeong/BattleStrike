@@ -245,31 +245,33 @@ public class SoundData : BaseData
     /// </summary>
     public SoundClip GetCopy(int index)
     {
-        if (index < 0 || index >= this.soundClips.Length)
+        if (index < 0 || index >= soundClips.Length)
         {
             return null;
         }
         SoundClip clip = new SoundClip();
+        SoundClip original = soundClips[index];
         clip.realID = index;
-        clip.clipPath = this.soundClips[index].clipPath;
-        clip.clipName = this.soundClips[index].clipName;
-        clip.maxVolume = this.soundClips[index].maxVolume;
-        clip.pitch = this.soundClips[index].pitch;
-        clip.dopplerLevel = this.soundClips[index].dopplerLevel;
-        clip.rolloffMode = this.soundClips[index].rolloffMode;
-        clip.minDistance = this.soundClips[index].minDistance;
-        clip.maxDistance = this.soundClips[index].maxDistance;
-        clip.spatialBlend = this.soundClips[index].spatialBlend;
-        clip.isLoop = this.soundClips[index].isLoop;
-        clip.checkTime = new float[this.soundClips[index].checkTime.Length];
-        clip.setTime = new float[this.soundClips[index].setTime.Length];
-        clip.playType = this.soundClips[index].playType;
+        clip.clipPath = original.clipPath;
+        clip.clipName = original.clipName;
+        clip.maxVolume = original.maxVolume;
+        clip.pitch = original.pitch;
+        clip.dopplerLevel = original.dopplerLevel;
+        clip.rolloffMode = original.rolloffMode;
+        clip.minDistance = original.minDistance;
+        clip.maxDistance = original.maxDistance;
+        clip.spatialBlend = original.spatialBlend;
+        clip.isLoop = original.isLoop;
+        clip.checkTime = new float[original.checkTime.Length];
+        clip.setTime = new float[original.setTime.Length];
+        clip.playType = original.playType;
         for (int i = 0; i < clip.checkTime.Length; i++)
         {
-            clip.checkTime[i] = this.soundClips[index].checkTime[i];
-            clip.setTime[i] = this.soundClips[index].setTime[i];
+            clip.checkTime[i] = original.checkTime[i];
+            clip.setTime[i] = original.setTime[i];
         }
         clip.PreLoad();
+
         return clip;
     }
 

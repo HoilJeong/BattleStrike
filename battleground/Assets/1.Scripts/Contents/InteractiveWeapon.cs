@@ -134,7 +134,7 @@ public class InteractiveWeapon : MonoBehaviour
 
     private void Update()
     {
-        if (this.pickable && Input.GetKeyDown(ButtonName.Pick))
+        if (this.pickable && Input.GetButtonDown(ButtonName.Pick))
         {
             weaponRigidbody.isKinematic = true;
             weaponCollider.enabled = false;
@@ -147,6 +147,7 @@ public class InteractiveWeapon : MonoBehaviour
         }
     }
 
+    /*
     private void OnCollisionEnter(Collision collision)
     {
         //아이템 드랍 사운드
@@ -155,6 +156,7 @@ public class InteractiveWeapon : MonoBehaviour
             SoundManager.Instance.PlayOneShotEffect((int)dropSound, transform.position, 0.5f);
         }
     }
+    */
 
     private void OnTriggerExit(Collider other)
     {
