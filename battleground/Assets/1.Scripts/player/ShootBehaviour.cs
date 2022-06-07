@@ -72,7 +72,7 @@ public class ShootBehaviour : GenericBehaviour
         changeWeaponTrigger = Animator.StringToHash(FC.AnimatorKey.ChangeWeapon);
         shootingTrigger = Animator.StringToHash(FC.AnimatorKey.Shooting);
         reloadBool = Animator.StringToHash(FC.AnimatorKey.Reload);
-        weapons = new List<InteractiveWeapon>();
+        weapons = new List<InteractiveWeapon>(new InteractiveWeapon[3]);
         aimBehaviour = GetComponent<AimBehaviour>();
         bulletHoles = new List<GameObject>();
 
@@ -107,6 +107,7 @@ public class ShootBehaviour : GenericBehaviour
         distToHand = (rightHand.position - neck.position).magnitude * 1.5f;
     }
 
+    //발사 비주얼 담당
     private void DrawShoot(GameObject weapon, Vector3 destination, Vector3 targetNormal, Transform parent, bool placeSparks= true, bool placeBulletHole = true)
     {
         Vector3 origin = gunMuzzle.position - gunMuzzle.right * 0.5f;
@@ -270,7 +271,7 @@ public class ShootBehaviour : GenericBehaviour
         if (newWeapon > 0)
         {
             weapons[newWeapon].gameObject.SetActive(true);
-            gunMuzzle = weapons[newWeapon].transform.Find("muzzle");
+            gunMuzzle = weapons[newWeapon].transform.Find("Muzzle");
             weapons[newWeapon].Toggle(true);
         }
         activeWeapon = newWeapon;
