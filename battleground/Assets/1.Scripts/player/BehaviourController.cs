@@ -26,9 +26,7 @@ public class BehaviourController : MonoBehaviour
     //
     private float h; //horizontal axis
     private float v; //vertical axis
-    public float turnSmoothing = 0.06f; //카메라를 향하도록 움직일 때 회전속도
-    private bool changedFOV; //달리기 동작이 카메라 시야각이 변경되었을 때 저장되었나
-    public float sprintFOV = 100; //달리기 시야각
+    public float turnSmoothing = 0.06f; //카메라를 향하도록 움직일 때 회전속도   
     private Vector3 lastDirection; //마지막 향했던 방향
     private bool sprint; //달리기 중인가?
     private int hFloat; //애니메이터 관련 가로축 값
@@ -150,17 +148,7 @@ public class BehaviourController : MonoBehaviour
         myAnimator.SetFloat(hFloat, h, 0.1f, Time.deltaTime);
         myAnimator.SetFloat(vFloat, v, 0.1f, Time.deltaTime);
 
-        sprint = Input.GetButton(ButtonName.Sprint);
-        if ((IsSprinting()))
-        {
-            changedFOV = true;
-            camScript.SetFOV(sprintFOV);
-        }
-        else if (changedFOV)
-        {
-            camScript.ResetFOV();
-            changedFOV = false;
-        }
+        sprint = Input.GetButton(ButtonName.Sprint);     
 
         myAnimator.SetBool(groundedBool, IsGrounded());
     }
