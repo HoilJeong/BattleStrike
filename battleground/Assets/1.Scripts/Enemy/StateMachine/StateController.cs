@@ -57,8 +57,8 @@ public class StateController : MonoBehaviour
     [HideInInspector] public bool targetInSight;
     [HideInInspector] public bool focusSight;
     [HideInInspector] public bool reloding;
-    [HideInInspector] public bool hadClearShot; //타겟까지 장애물이 있었냐 없었냐?
-    [HideInInspector] public bool haveClearShot; //지금 타켓까지 장애물이 있냐?
+    [HideInInspector] public bool hadClearShot; //타겟까지 장애물이 있었냐 없었나?
+    [HideInInspector] public bool haveClearShot; //지금 타켓까지 장애물이 있나?
     [HideInInspector] public int coverHash = -1; //하나의 장애물에 적이 뭉쳐있지 않도록
 
     [HideInInspector] public EnemyVariables variables;
@@ -96,4 +96,41 @@ public class StateController : MonoBehaviour
         }
     }
 
+    public bool Strafing
+    {
+        get
+        {
+            return strafing;
+        }
+        set
+        {
+            enemyAnimation.anim.SetBool("Strafe", value);
+            strafing = value;
+        }
+    }
+
+    public bool Aiming
+    {
+        get
+        {
+            return aiming;
+        }
+        set
+        {
+            if(aiming != value)
+            {
+                enemyAnimation.anim.SetBool("Aim", value);
+                aiming = value;
+            }
+        }
+    }
+
+
+    public IEnumerator UnstuckAim(float delay)
+    {
+        yield return new WaitForSeconds(delay * 0.5f);
+        Aiming = false;
+        yield return new WaitForSeconds(delay * 0.5f);
+        Aiming = true;
+    }
 }
