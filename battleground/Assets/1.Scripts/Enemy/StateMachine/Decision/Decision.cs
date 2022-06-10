@@ -18,7 +18,7 @@ public abstract class Decision : ScriptableObject
     public delegate bool HandleTargets(StateController controller, bool hasTargets, Collider[] targetInRadius);
 
     public static bool CheckTargetsInRadius(StateController controller, float radius, HandleTargets handleTargets)
-    {
+    {   //모든 decision에서 활용
         //타겟된 상대가 죽었으면 false리턴
         if (controller.aimTarget.root.GetComponent<HealthBase>().isDead)
         {
