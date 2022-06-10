@@ -12,7 +12,7 @@ public class CoverLookUp : MonoBehaviour
     private List<Vector3[]> allCoverSpots;
     private GameObject[] covers;
     private List<int> coverHashCodes; //cover unity ID;
-    private Dictionary<float, Vector3> filteredSpots; //NPC로부터 특정위치에서 멀어지거나 각도가 바뀌는 것들은 필터
+    private Dictionary<float, Vector3> filteredSpots; //필터링된 지점들을 모아놓은 곳
 
     private GameObject[] GetObjectsInLayerMask(int layerMask)
     {
