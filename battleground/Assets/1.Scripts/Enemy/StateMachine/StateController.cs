@@ -57,8 +57,8 @@ public class StateController : MonoBehaviour
     [HideInInspector] public bool targetInSight;
     [HideInInspector] public bool focusSight;
     [HideInInspector] public bool reloading;
-    [HideInInspector] public bool hadClearShot; //타겟까지 장애물이 있었냐 없었나?
-    [HideInInspector] public bool haveClearShot; //지금 타켓까지 장애물이 있나?
+    [HideInInspector] public bool hadClearShot; //타겟까지 장애물이 있었는가 없었는가?
+    [HideInInspector] public bool haveClearShot; //지금 타켓까지 장애물이 있는가?
     [HideInInspector] public int coverHash = -1; //하나의 장애물에 적이 뭉쳐있지 않도록
 
     [HideInInspector] public EnemyVariables variables;
