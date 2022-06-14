@@ -27,7 +27,7 @@ public class AttackAction : Action
     }
 
     private void DoShot(StateController controller, Vector3 direction, Vector3 hitPoint, Vector3 hitNormal = default, bool organic = false, Transform target = null)
-    {
+    {      
         GameObject muzzleFlash = EffectManager.Instance.EffectOneShot((int)EffectList.flash, Vector3.zero);
         muzzleFlash.transform.SetParent(controller.enemyAnimation.gunMuzzle);
         muzzleFlash.transform.localPosition = Vector3.zero;
@@ -57,7 +57,8 @@ public class AttackAction : Action
             }
         }
 
-        SoundManager.Instance.PlayShotSound(controller.classID, controller.enemyAnimation.gunMuzzle.position, 2f);   
+        SoundManager.Instance.PlayShotSound(controller.classID, controller.enemyAnimation.gunMuzzle.position, 2f);
+        
     }
 
     private void CastShot(StateController controller)
@@ -81,7 +82,7 @@ public class AttackAction : Action
     private bool CanShoot(StateController controller)
     {
         float distance = (controller.personalTarget - controller.enemyAnimation.gunMuzzle.position).sqrMagnitude;
-        if (controller.Aiming && (controller.enemyAnimation.currentAimingAngleGap < aimAngleGap || distance <= 5.0f))
+        if (controller.Aiming && (controller.enemyAnimation.currentAimingAngleGap <= aimAngleGap || distance <= 1000.0f))
         {
             if (controller.variables.startShootTimer >= startShootDelay)
             {
@@ -101,7 +102,7 @@ public class AttackAction : Action
         if (Time.timeScale > 0 && controller.variables.shotTimer == 0f)
         {
             controller.enemyAnimation.anim.SetTrigger(FC.AnimatorKey.Shooting);
-            CanShoot(controller);
+            CastShot(controller);
         }
         else if (controller.variables.shotTimer >= (0.1f + 2f * Time.deltaTime))
         {
@@ -119,7 +120,7 @@ public class AttackAction : Action
         controller.focusSight = true;
 
         if (CanShoot(controller))
-        {
+        {          
             Shoot(controller);
         }
         controller.variables.blindEngageTimer += Time.deltaTime;
