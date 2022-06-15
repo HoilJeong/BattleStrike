@@ -8,7 +8,7 @@ using UnityEngine.UI;
 //죽었을 경우 모든 동작 스크립트 동작을 멈춘다.
 public class PlayerHealth : HealthBase
 {
-    public int health = 100;
+    public int health;
     public int criticalHealth = 30;
     public Transform healthHUD;
     public SoundList deathSound;
@@ -16,22 +16,30 @@ public class PlayerHealth : HealthBase
     public GameObject hurtPrefab; //피격
     public float decayFactor = 0.8f; //감쇠
 
-    private int totalHealth;
+    private int totalHealth = 100;
     private RectTransform healthBar, placeHolderBar;
     private Text healthLabel;
     private float originalBarScale;
     private bool critical;
 
+    private BlinkHUD criticalHUD;
+    private HurtHUD hurtHUD;
+
     private void Awake()
     {
         myAnimator = GetComponent<Animator>();
-        totalHealth = health;
+        health = totalHealth;
 
-        healthBar = healthHUD.Find("HealthBar/Bar").GetComponent<RectTransform>();
+        healthBar = healthHUD.Find("HealthBar/Bar").GetComponent<RectTransform>();      
         placeHolderBar = healthHUD.Find("HealthBar/Placeholder").GetComponent<RectTransform>();
         healthLabel = healthHUD.Find("HealthBar/Label").GetComponent<Text>();
         originalBarScale = healthBar.sizeDelta.x;
-        healthLabel.text = "" + health;
+        healthLabel.text = "" + (int)health;
+
+        
+        criticalHUD = healthHUD.Find("Bloodframe").GetComponent<BlinkHUD>();
+        hurtHUD = this.gameObject.AddComponent<HurtHUD>();
+        hurtHUD.Setup(healthHUD, hurtPrefab, decayFactor, transform);    
     }
 
     private void Update()
@@ -49,12 +57,12 @@ public class PlayerHealth : HealthBase
 
     void UpdateHealthBar()
     {
-        healthLabel.text = "" + health;
+        healthLabel.text = "" + (int)health;
         float scaleFactor = health / totalHealth;
         healthBar.sizeDelta = new Vector2(scaleFactor * originalBarScale, healthBar.sizeDelta.y);
     }
 
-    void Dead()
+    void Kill()
     {
         isDead = true;
         gameObject.layer = TagAndLayer.GetLayerByName(TagAndLayer.LayerName.Default);
@@ -78,13 +86,19 @@ public class PlayerHealth : HealthBase
 
         UpdateHealthBar();
 
+        if (hurtPrefab && healthHUD)
+        {
+            hurtHUD.DrawHurtUI(origin.transform, origin.GetHashCode());
+        }
+
         if (health <= 0)
         {
-            Dead();
+            Kill();
         }
         else if (health <= criticalHealth && !critical)
         {
             critical = true;
+            criticalHUD.StartBlink();
         }
         SoundManager.Instance.PlayOneShotEffect((int)hitSound, location, 1f);
     }
