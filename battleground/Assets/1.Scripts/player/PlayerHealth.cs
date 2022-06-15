@@ -8,7 +8,7 @@ using UnityEngine.UI;
 //죽었을 경우 모든 동작 스크립트 동작을 멈춘다.
 public class PlayerHealth : HealthBase
 {
-    public int health;
+    public float health;
     public int criticalHealth = 30;
     public Transform healthHUD;
     public SoundList deathSound;
@@ -16,10 +16,9 @@ public class PlayerHealth : HealthBase
     public GameObject hurtPrefab; //피격
     public float decayFactor = 0.8f; //감쇠
 
-    private int totalHealth = 100;
-    private RectTransform healthBar, placeHolderBar;
-    private Text healthLabel;
-    private float originalBarScale;
+    private float totalHealth = 100;         
+    private Slider healthBar;   
+    private Text healthLabel;  
     private bool critical;
 
     private BlinkHUD criticalHUD;
@@ -29,14 +28,10 @@ public class PlayerHealth : HealthBase
     {
         myAnimator = GetComponent<Animator>();
         health = totalHealth;
-
-        healthBar = healthHUD.Find("HealthBar/Bar").GetComponent<RectTransform>();      
-        placeHolderBar = healthHUD.Find("HealthBar/Placeholder").GetComponent<RectTransform>();
+        healthBar = healthHUD.Find("HealthBar/Bar").GetComponent<Slider>();
         healthLabel = healthHUD.Find("HealthBar/Label").GetComponent<Text>();
-        originalBarScale = healthBar.sizeDelta.x;
         healthLabel.text = "" + (int)health;
-
-        
+      
         criticalHUD = healthHUD.Find("Bloodframe").GetComponent<BlinkHUD>();
         hurtHUD = this.gameObject.AddComponent<HurtHUD>();
         hurtHUD.Setup(healthHUD, hurtPrefab, decayFactor, transform);    
@@ -44,22 +39,13 @@ public class PlayerHealth : HealthBase
 
     private void Update()
     {
-        if (placeHolderBar.sizeDelta.x > healthBar.sizeDelta.x)
-        {
-            placeHolderBar.sizeDelta = Vector2.Lerp(placeHolderBar.sizeDelta, healthBar.sizeDelta, 2f * Time.deltaTime);
-        }
-    }
-
-    public bool IsFullLife()
-    {
-        return Mathf.Abs(health - totalHealth) < float.Epsilon;
+        
     }
 
     void UpdateHealthBar()
     {
         healthLabel.text = "" + (int)health;
-        float scaleFactor = health / totalHealth;
-        healthBar.sizeDelta = new Vector2(scaleFactor * originalBarScale, healthBar.sizeDelta.y);
+        healthBar.value = health / totalHealth;   
     }
 
     void Kill()
