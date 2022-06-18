@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 인벤토리 역할, 무기를 소지하고 있는지 확인용
+/// 무기 인벤토리 역할, 무기를 소지하고 있는지 확인용
 /// </summary>
 public class Inventory : MonoBehaviour
 {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Item DataBase", menuName = "Inventory System/Items/DataBase")]
 public class ItemObjectDataBase : ScriptableObject
-{
+{  
     public ItemObject[] itemObjects;
 
     public void OnValidate()
