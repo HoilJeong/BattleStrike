@@ -10,7 +10,7 @@ public class EnemyHealth : HealthBase
     public GameObject healthHUD;
     public GameObject bloodSample;
     public bool headShot;
-
+   
     private float totalHealth;
     private Transform weapon;
     private Transform hud;
@@ -34,7 +34,7 @@ public class EnemyHealth : HealthBase
         originalBarScale = healthBar.sizeDelta.x;
         anim = GetComponent<Animator>();
         controller = GetComponent<StateController>();
-        gameController = GameObject.FindGameObjectWithTag("GameController");
+        gameController = GameObject.FindGameObjectWithTag("GameController");     
 
         foreach (Transform child in anim.GetBoneTransform(HumanBodyBones.RightHand))
         {
@@ -79,7 +79,9 @@ public class EnemyHealth : HealthBase
         anim.enabled = false;
         Destroy(weapon.gameObject);
         Destroy(hud.gameObject);
-        isDead = true;
+        this.transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
+        Destroy(this.gameObject, 120f);
+        isDead = true;      
     }
 
     public override void TakeDamage(Vector3 location, Vector3 direction, float damage, Collider bodyPart = null, GameObject origin = null)

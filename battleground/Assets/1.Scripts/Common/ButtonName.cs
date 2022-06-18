@@ -12,4 +12,6 @@ public class ButtonName
         Change = "Change", // Default change weapon button.
         Reload = "Reload", // Default reload weapon button.
         Drop = "Drop"; // Default drop weapon button.
+    public const string Crouch = "Crouch";
+    public const string Use = "UseItem";
 }

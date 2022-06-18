@@ -325,7 +325,7 @@ public class BehaviourController : MonoBehaviour
 public abstract class GenericBehaviour : MonoBehaviour
 {
     protected int speedFloat;
-    protected BehaviourController behaviourController;
+    public BehaviourController behaviourController;
     protected int behaviourCode;
     protected bool canSprint;
 

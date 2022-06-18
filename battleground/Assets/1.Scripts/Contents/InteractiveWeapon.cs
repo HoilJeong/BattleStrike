@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// 충돌체를 생성해 무기를 주울 수 있도록 한다.
 /// 루팅했으면 충돌체는 제거
 /// 무기를 다시 버릴 수도 있어야 하며, 충돌체를 다시 붙여준다.
-/// 관련해서 UI도 컨트롤할 수 있어야하고, ShootBehaviour에 주운 무기를 넣어주게 된다.
+/// 관련해서 UI도 컨트롤할 수 있어야하고, Inventory에 주운 무기를 넣어주게 된다.
 /// </summary>
 public class InteractiveWeapon : MonoBehaviour
 {
@@ -23,7 +23,7 @@ public class InteractiveWeapon : MonoBehaviour
     {
         NONE,
         SHORT,
-        LONG,
+        LONG,    
     }
 
     public enum WeaponMode
@@ -40,7 +40,7 @@ public class InteractiveWeapon : MonoBehaviour
     public int currentMagCapacity, totalBullets; //현재 탄창 양과, 소지하고 있는 전체 총알양
     private int fullMag, maxBullets; //재장전시 꽉 채우는 탄의 양과 한번에 채울 수 있는 최대 총알량
     private GameObject player, gameController;
-    private ShootBehaviour playerInventory;
+    private Inventory playerInventory;
     private BoxCollider weaponCollider;
     private SphereCollider interactiveRadius;
     private Rigidbody weaponRigidbody;
@@ -57,12 +57,12 @@ public class InteractiveWeapon : MonoBehaviour
     {
         gameObject.name = this.label_weaponName;
         gameObject.layer = LayerMask.NameToLayer(TagAndLayer.LayerName.IgnoreRayCast);
-        foreach(Transform tr in transform)
+        foreach (Transform tr in transform)
         {
             tr.gameObject.layer = LayerMask.NameToLayer(TagAndLayer.LayerName.IgnoreRayCast);
         }
         player = GameObject.FindGameObjectWithTag(TagAndLayer.TagName.Player);
-        playerInventory = player.GetComponent<ShootBehaviour>();
+        playerInventory = player.GetComponent<Inventory>();
         gameController = GameObject.FindGameObjectWithTag(TagAndLayer.TagName.GameController);
 
         if (weaponHUD == null)

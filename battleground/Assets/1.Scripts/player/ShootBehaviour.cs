@@ -30,25 +30,26 @@ public class ShootBehaviour : GenericBehaviour
     //짧은 총, 피스톨 같은 총을 들었을 때 조준시 왼팔의 위치 보정
     public Vector3 leftArmShortAim = new Vector3(-4.0f, 0.0f, 2.0f);
 
-    private int activeWeapon = 0;
+    //private int activeWeapon = 0;
 
     //animator value
-    private int weaponType;
-    private int changeWeaponTrigger;
+    public int weaponType;
+    public int changeWeaponTrigger;
     private int shootingTrigger;
     private int aimBool, blockedAimBool, reloadBool;
 
-    private List<InteractiveWeapon> weapons; //소지하고 있는 무기들
-    private Dictionary<InteractiveWeapon.WeaponType, int> slotMap;
+    //private List<InteractiveWeapon> weapons; //소지하고 있는 무기들
+    //private Dictionary<InteractiveWeapon.WeaponType, int> slotMap;
+    private Inventory inventory;
 
     private bool isAiming, isAimBlocked;
 
-    private Transform gunMuzzle;
+    public Transform gunMuzzle;
     private float distToHand;
 
     private Vector3 castRelativeOrigin; //앞에 막혀있는지 확인
 
-    private Transform hips, spine, chest, rightHand, leftArm;
+    public Transform hips, spine, chest, rightHand, leftArm;
     private Vector3 initialRootRotation;
     private Vector3 initialHipsRotation;
     private Vector3 initialSpineRotation;
@@ -72,19 +73,21 @@ public class ShootBehaviour : GenericBehaviour
         changeWeaponTrigger = Animator.StringToHash(FC.AnimatorKey.ChangeWeapon);
         shootingTrigger = Animator.StringToHash(FC.AnimatorKey.Shooting);
         reloadBool = Animator.StringToHash(FC.AnimatorKey.Reload);
-        weapons = new List<InteractiveWeapon>(new InteractiveWeapon[3]);
+        //weapons = new List<InteractiveWeapon>(new InteractiveWeapon[3]);
         aimBehaviour = GetComponent<AimBehaviour>();
         bulletHoles = new List<GameObject>();
+        inventory = GetComponent<Inventory>();
 
         muzzleFlash.SetActive(false);
         shot.SetActive(false);
         sparks.SetActive(false);
-
-        slotMap = new Dictionary<InteractiveWeapon.WeaponType, int>
+        /*
+        weaponSlotMap = new Dictionary<InteractiveWeapon.WeaponType, int>
         {
             {InteractiveWeapon.WeaponType.SHORT, 1 },
             {InteractiveWeapon.WeaponType.LONG, 2 }
         };
+        */
 
         Transform neck = this.behaviourController.GetAnimator.GetBoneTransform(HumanBodyBones.Neck);
         if (!neck)
@@ -156,7 +159,7 @@ public class ShootBehaviour : GenericBehaviour
 
     private void ShootWeapon(int weapon, bool firstShot = true)
     {
-        if (!isAiming || isAimBlocked || behaviourController.GetAnimator.GetBool(reloadBool) || !weapons[weapon].Shoot(firstShot))
+        if (!isAiming || isAimBlocked || behaviourController.GetAnimator.GetBool(reloadBool) || !inventory.weapons[weapon].Shoot(firstShot))
         {
             return;
         }
@@ -165,7 +168,7 @@ public class ShootBehaviour : GenericBehaviour
             this.burstShotCount++;
             behaviourController.GetAnimator.SetTrigger(shootingTrigger);
             aimBehaviour.crossHair = shootCrossHair;
-            behaviourController.GetCamScript.BounceVertical(weapons[weapon].recoilAngle);
+            behaviourController.GetCamScript.BounceVertical(inventory.weapons[weapon].recoilAngle);
 
             //살짝 못맞추게 만든다
             Vector3 imprecision = Random.Range(-shootErrorRate, shootErrorRate) * behaviourController.playerCamera.forward;
@@ -176,20 +179,20 @@ public class ShootBehaviour : GenericBehaviour
                 if (hit.collider.transform != transform)
                 {
                     bool isOrganic = (organicMask == (organicMask | (1 << hit.transform.root.gameObject.layer)));
-                    DrawShoot(weapons[weapon].gameObject, hit.point, hit.normal, hit.collider.transform, !isOrganic, !isOrganic);
+                    DrawShoot(inventory.weapons[weapon].gameObject, hit.point, hit.normal, hit.collider.transform, !isOrganic, !isOrganic);
                     if (hit.collider)
                     {
-                        hit.collider.SendMessageUpwards("HitCallBack", new HealthBase.DamageInfo(hit.point, ray.direction, weapons[weapon].bulletDamage, hit.collider), SendMessageOptions.DontRequireReceiver);
+                        hit.collider.SendMessageUpwards("HitCallBack", new HealthBase.DamageInfo(hit.point, ray.direction, inventory.weapons[weapon].bulletDamage, hit.collider), SendMessageOptions.DontRequireReceiver);
                     }
                 }
             }
             else
             {
                 Vector3 destination = (ray.direction * 500f) - ray.origin;
-                DrawShoot(weapons[weapon].gameObject, destination, Vector3.up, null, false, false);
+                DrawShoot(inventory.weapons[weapon].gameObject, destination, Vector3.up, null, false, false);
             }
 
-            SoundManager.Instance.PlayOneShotEffect((int)weapons[weapon].shotSound, gunMuzzle.position, 5f);
+            SoundManager.Instance.PlayOneShotEffect((int)inventory.weapons[weapon].shotSound, gunMuzzle.position, 5f);
             GameObject gameController = GameObject.FindGameObjectWithTag(TagAndLayer.TagName.GameController);
             gameController.SendMessage("RootAlertNearBy", ray.origin, SendMessageOptions.DontRequireReceiver);
             shotInterval = originalShotInterval;
@@ -200,10 +203,10 @@ public class ShootBehaviour : GenericBehaviour
     public void EndReloadWeapon()
     {
         behaviourController.GetAnimator.SetBool(reloadBool, false);
-        weapons[activeWeapon].EndReload();
+        inventory.weapons[inventory.activeWeapon].EndReload();
     }
 
-    private void SetWeaponCrossHair(bool armed)
+    public void SetWeaponCrossHair(bool armed)
     {
         if (armed)
         {
@@ -222,23 +225,23 @@ public class ShootBehaviour : GenericBehaviour
             shotInterval -= shootRateFactor * Time.deltaTime;
             if (shotInterval <= 0.4f)
             {
-                SetWeaponCrossHair(activeWeapon > 0);
+                SetWeaponCrossHair(inventory.activeWeapon > 0);
                 muzzleFlash.SetActive(false);
-                if (activeWeapon > 0)
+                if (inventory.activeWeapon > 0)
                 {
-                    behaviourController.GetCamScript.BounceVertical(-weapons[activeWeapon].recoilAngle * 0.1f);
+                    behaviourController.GetCamScript.BounceVertical(-inventory.weapons[inventory.activeWeapon].recoilAngle * 0.1f);
 
                     if (shotInterval <= (0.4f - 2f * Time.deltaTime))
                     {
-                        if (weapons[activeWeapon].weaponMode == InteractiveWeapon.WeaponMode.AUTO && Input.GetAxisRaw(ButtonName.Shoot) != 0)
+                        if (inventory.weapons[inventory.activeWeapon].weaponMode == InteractiveWeapon.WeaponMode.AUTO && Input.GetAxisRaw(ButtonName.Shoot) != 0)
                         {
-                            ShootWeapon(activeWeapon, false);
+                            ShootWeapon(inventory.activeWeapon, false);
                         }
-                        else if (weapons[activeWeapon].weaponMode == InteractiveWeapon.WeaponMode.BURST && burstShotCount < weapons[activeWeapon].burstSize)
+                        else if (inventory.weapons[inventory.activeWeapon].weaponMode == InteractiveWeapon.WeaponMode.BURST && burstShotCount < inventory.weapons[inventory.activeWeapon].burstSize)
                         {
-                            ShootWeapon(activeWeapon, false);
+                            ShootWeapon(inventory.activeWeapon, false);
                         }
-                        else if (weapons[activeWeapon].weaponMode != InteractiveWeapon.WeaponMode.BURST)
+                        else if (inventory.weapons[inventory.activeWeapon].weaponMode != InteractiveWeapon.WeaponMode.BURST)
                         {
                             burstShotCount = 0;
                         }
@@ -254,70 +257,72 @@ public class ShootBehaviour : GenericBehaviour
         }
     }
 
-    private void ChangeWeapon(int oldWeapon, int newWeapon)
+    /*
+    public void ChangeWeapon(int oldWeapon, int newWeapon)
     {
         if (oldWeapon > 0)
         {
-            weapons[oldWeapon].gameObject.SetActive(false);
+            inventory.weapons[oldWeapon].gameObject.SetActive(false);
             gunMuzzle = null;
-            weapons[oldWeapon].Toggle(false);
+            inventory.weapons[oldWeapon].Toggle(false);
         }
 
         //빈곳을 찾는다
-        while (weapons[newWeapon] == null && newWeapon > 0)
+        while (inventory.weapons[newWeapon] == null && newWeapon > 0)
         {
-            newWeapon = (newWeapon + 1) % weapons.Count;
+            newWeapon = (newWeapon + 1) % inventory.weapons.Count;
         }
         if (newWeapon > 0)
         {
-            weapons[newWeapon].gameObject.SetActive(true);
-            gunMuzzle = weapons[newWeapon].transform.Find("Muzzle");
-            weapons[newWeapon].Toggle(true);
+            inventory.weapons[newWeapon].gameObject.SetActive(true);
+            gunMuzzle = inventory.weapons[newWeapon].transform.Find("Muzzle");
+            inventory.weapons[newWeapon].Toggle(true);
         }
-        activeWeapon = newWeapon;
+        inventory.activeWeapon = newWeapon;
         if (oldWeapon != newWeapon)
         {
             behaviourController.GetAnimator.SetTrigger(changeWeaponTrigger);
-            behaviourController.GetAnimator.SetInteger(weaponType, weapons[newWeapon] ? (int)weapons[newWeapon].weaponType : 0);
+            behaviourController.GetAnimator.SetInteger(weaponType, inventory.weapons[newWeapon] ? (int)inventory.weapons[newWeapon].weaponType : 0);
         }
         SetWeaponCrossHair(newWeapon > 0);
     }
+    */
 
     private void Update()
     {
         float shootTrigger = Mathf.Abs(Input.GetAxisRaw(ButtonName.Shoot));
-        if (shootTrigger > Mathf.Epsilon && !isShooting && activeWeapon > 0 && burstShotCount == 0)
+        if (shootTrigger > Mathf.Epsilon && !isShooting && inventory.activeWeapon > 0 && burstShotCount == 0)
         {
             isShooting = true;
-            ShootWeapon(activeWeapon);
+            ShootWeapon(inventory.activeWeapon);
         }
         else if (isShooting && shootTrigger < Mathf.Epsilon)
         {
             isShooting = false;
         }
-        else if (Input.GetButtonUp(ButtonName.Reload) && activeWeapon > 0)
+        else if (Input.GetButtonUp(ButtonName.Reload) && inventory.activeWeapon > 0)
         {
-            if (weapons[activeWeapon].StartReload())
+            if (inventory.weapons[inventory.activeWeapon].StartReload())
             {
-                SoundManager.Instance.PlayOneShotEffect((int)weapons[activeWeapon].reloadSound, gunMuzzle.position, 0.5f);
+                SoundManager.Instance.PlayOneShotEffect((int)inventory.weapons[inventory.activeWeapon].reloadSound, gunMuzzle.position, 0.5f);
                 behaviourController.GetAnimator.SetBool(reloadBool, true);
             }
         }
-        else if (Input.GetButtonDown(ButtonName.Drop) && activeWeapon > 0)
+        else if (Input.GetButtonDown(ButtonName.Drop) && inventory.activeWeapon > 0)
         {
             EndReloadWeapon();
-            int weaponToDrop = activeWeapon;
-            ChangeWeapon(activeWeapon, 0);
-            weapons[weaponToDrop].Drop();
-            weapons[weaponToDrop] = null;
+            int weaponToDrop = inventory.activeWeapon;
+            inventory.ChangeWeapon(inventory.activeWeapon, 0);
+            inventory.weapons[weaponToDrop].Drop();
+            inventory.weapons[weaponToDrop] = null;
         }
         else
         {
             if ((Mathf.Abs(Input.GetAxisRaw(ButtonName.Change)) > Mathf.Epsilon && !isChangingWeapon))
             {
                 isChangingWeapon = true;
-                int nextWeapon = activeWeapon;
-                ChangeWeapon(activeWeapon, nextWeapon % weapons.Count);
+                int nextWeapon = inventory.activeWeapon;
+                inventory.ChangeWeapon(inventory.activeWeapon, nextWeapon % inventory.weapons.Count);
             }
             else if (Mathf.Abs(Input.GetAxisRaw(ButtonName.Change)) < Mathf.Epsilon)
             {
@@ -331,6 +336,7 @@ public class ShootBehaviour : GenericBehaviour
         isAiming = behaviourController.GetAnimator.GetBool(aimBool);
     }
 
+    /*
     /// <summary>
     /// 인벤토리 역할을 하게될 함수
     /// </summary>   
@@ -359,6 +365,7 @@ public class ShootBehaviour : GenericBehaviour
         weapons[slotMap[newWeapon.weaponType]] = newWeapon;
         ChangeWeapon(activeWeapon, slotMap[newWeapon.weaponType]);
     }
+    */
 
     private bool CheckforBlockedAim()
     {
@@ -372,7 +379,7 @@ public class ShootBehaviour : GenericBehaviour
 
     public void OnAnimatorIK(int layerIndex)
     {
-        if (isAiming && activeWeapon > 0)
+        if (isAiming && inventory.activeWeapon > 0)
         {
             if (CheckforBlockedAim())
             {
@@ -386,7 +393,7 @@ public class ShootBehaviour : GenericBehaviour
 
             float xCamRot = Quaternion.LookRotation(behaviourController.playerCamera.forward).eulerAngles.x;
             targetRot = Quaternion.AngleAxis(xCamRot + armsRotation, this.transform.right);
-            if (weapons[activeWeapon] && weapons[activeWeapon].weaponType == InteractiveWeapon.WeaponType.LONG)
+            if (inventory.weapons[inventory.activeWeapon] && inventory.weapons[inventory.activeWeapon].weaponType == InteractiveWeapon.WeaponType.LONG)
             {
                 targetRot *= Quaternion.AngleAxis(9f, transform.right);
                 targetRot *= Quaternion.AngleAxis(20f, transform.up);
@@ -399,7 +406,7 @@ public class ShootBehaviour : GenericBehaviour
 
     private void LateUpdate()
     {
-        if (isAiming && weapons[activeWeapon] && weapons[activeWeapon].weaponType == InteractiveWeapon.WeaponType.SHORT)
+        if (isAiming && inventory.weapons[inventory.activeWeapon] && inventory.weapons[inventory.activeWeapon].weaponType == InteractiveWeapon.WeaponType.SHORT)
         {
             leftArm.localEulerAngles = leftArm.localEulerAngles + leftArmShortAim;
         }
